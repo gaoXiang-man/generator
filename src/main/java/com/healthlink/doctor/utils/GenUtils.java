@@ -28,15 +28,7 @@ public class GenUtils {
 
 	public static List<String> getTemplates(){
 		List<String> templates = new ArrayList<String>();
-		templates.add("template/Entity.java.vm");
-		templates.add("template/Dao.java.vm");
-		templates.add("template/Dao.xml.vm");
-		templates.add("template/Service.java.vm");
-		templates.add("template/ServiceImpl.java.vm");
-		templates.add("template/Controller.java.vm");
-		templates.add("template/list.html.vm");
-		templates.add("template/list.js.vm");
-		templates.add("template/menu.sql.vm");
+		templates.add("PythonTable.py.vm");
 		return templates;
 	}
 	

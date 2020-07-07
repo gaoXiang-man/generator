@@ -1,0 +1,56 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+import commands
+import  traceback
+import com.healthlink.hbs.util.HbsConfig as config
+
+
+def exprotSysUser(dbConfigs):
+
+# sqoopCmd =  r'''sqoop-import --connect %s  --username %s --password %s --table sys_user --delete-target-dir -m 1 --split-by id --null-string '\\\\N' --null-non-string '\\\\N' --fetch-size 10000 --hive-drop-import-delims  --fields-terminated-by '\\t' --target-dir '/health/hbs/sys_user' '''%(dbConfigs['connect'],dbConfigs['user'],dbConfigs['password'])
+# print(sqoopCmd)
+# sqoopCmd = r'''sqoop-import --connect %s \
+#      --username %s  \
+#      --password %s \
+#      --table sys_user \
+#      --delete-target-dir \
+#      -m 1 \
+#      --split-by id \
+#      --null-string '\\N' \
+#      --null-non-string '\\N' \
+#      --fetch-size 10000 \
+#      --hive-drop-import-delims \
+#      --fields-terminated-by '\t' \
+#      --target-dir '/health/hbs/sys_user' \
+#     ''' % (dbConfigs['connect'], dbConfigs['user'], dbConfigs['password'])
+# print(sqoopCmd)
+
+sqoopCmd = r'''sqoop-import --connect %s \
+--username %s  \
+--password %s \
+--query 'select id,username,password,phone,status,alias,belong_group,create_time,create_user,update_time,update_user,delete_flag,delete_time,delete_user from sys_user where $CONDITIONS' \
+--delete-target-dir \
+-m 1 \
+--split-by id \
+--null-string '\\N' \
+--null-non-string '\\N' \
+--fetch-size 10000 \
+--hive-drop-import-delims \
+--fields-terminated-by '\t' \
+--target-dir '/health/hbs/sys_user' \
+''' % (dbConfigs['connect'], dbConfigs['user'], dbConfigs['password'])
+print(sqoopCmd)
+status,res = commands.getstatusoutput(sqoopCmd)
+print("res = %s"%(res))
+if status !=0:
+print("sqoop import hbs.sys_user error")
+
+
+if __name__ == '__main__':
+try:
+exprotSysUser(config.dbConfigs)
+except Exception,e:
+print traceback.print_exc()
+raise Exception
+
