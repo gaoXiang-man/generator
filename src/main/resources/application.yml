@@ -8,11 +8,11 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     #MySQL配置
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.10.5:3306/hbs
+    url: jdbc:mysql://127.0.0.1:3306/ms_user?serverTimezone=UTC
 #    url: jdbc:mysql://127.0.0.1:3306/doctor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
 #    url: jdbc:mysql://107.191.61.5/db_doctor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-    username: mabin
-    password: mabin123
+    username: root
+    password: yunyun.15yun
     #oracle配置
 #    driverClassName: oracle.jdbc.OracleDriver
 #    url: jdbc:oracle:thin:@192.168.10.10:1521:helowin

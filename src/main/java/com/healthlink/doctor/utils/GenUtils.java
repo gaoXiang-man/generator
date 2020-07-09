@@ -28,7 +28,7 @@ public class GenUtils {
 
 	public static List<String> getTemplates(){
 		List<String> templates = new ArrayList<String>();
-		templates.add("PythonTable.py.vm");
+		templates.add("template/PythonTable.py.vm");
 		return templates;
 	}
 	
@@ -119,7 +119,7 @@ public class GenUtils {
 			
 			try {
 				//添加到zip
-				zip.putNextEntry(new ZipEntry(getFileName(template, tableEntity.getClassName(), config.getString("package"), config.getString("moduleName"))));
+				zip.putNextEntry(new ZipEntry(getFileName(template, tableEntity, config.getString("package"), config.getString("moduleName"))));
 				IOUtils.write(sw.toString(), zip, "UTF-8");
 				IOUtils.closeQuietly(sw);
 				zip.closeEntry();
@@ -161,48 +161,13 @@ public class GenUtils {
 	/**
 	 * 获取文件名
 	 */
-	public static String getFileName(String template, String className, String packageName, String moduleName) {
+	public static String getFileName(String template, TableEntity tableEntity, String packageName, String moduleName) {
 		String packagePath = "main" + File.separator + "java" + File.separator;
 		if (StringUtils.isNotBlank(packageName)) {
 			packagePath += packageName.replace(".", File.separator) + File.separator + moduleName + File.separator;
 		}
-
-		if (template.contains("Entity.java.vm" )) {
-			return packagePath + "entity" + File.separator + className + "Entity.java";
-		}
-
-		if (template.contains("Dao.java.vm" )) {
-			return packagePath + "dao" + File.separator + className + "Dao.java";
-		}
-
-		if (template.contains("Service.java.vm" )) {
-			return packagePath + "service" + File.separator + className + "Service.java";
-		}
-
-		if (template.contains("ServiceImpl.java.vm" )) {
-			return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
-		}
-
-		if (template.contains("Controller.java.vm" )) {
-			return packagePath + "controller" + File.separator + className + "Controller.java";
-		}
-
-		if (template.contains("Dao.xml.vm" )) {
-			return "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + moduleName + File.separator + className + "Dao.xml";
-		}
-
-		if (template.contains("list.html.vm" )) {
-			return "main" + File.separator + "resources" + File.separator + "templates" + File.separator
-					+ "modules" + File.separator + moduleName + File.separator + className.toLowerCase() + ".html";
-		}
-
-		if (template.contains("list.js.vm" )) {
-			return "main" + File.separator + "resources" + File.separator + "statics" + File.separator + "js" + File.separator
-					+ "modules" + File.separator + moduleName + File.separator + className.toLowerCase() + ".js";
-		}
-
-		if (template.contains("menu.sql.vm" )) {
-			return className.toLowerCase() + "_menu.sql";
+		if (template.contains("PythonTable.py.vm" )) {
+			return moduleName + File.separator + tableEntity.getTableName() + ".py";
 		}
 
 		return null;
