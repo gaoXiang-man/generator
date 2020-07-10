@@ -1,15 +1,10 @@
-server:
-  port: 8083
-  servlet:
-    context-path: /generator
-
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     #MySQL配置
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1/ms_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-#    url: jdbc:mysql://127.0.0.1:3306/doctor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://127.0.0.1/ms_user
+    #    url: jdbc:mysql://127.0.0.1:3306/doctor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: yunyun.15yun
     #oracle配置
