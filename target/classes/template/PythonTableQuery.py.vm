@@ -19,13 +19,13 @@ def exprotSysUser(dbConfigs):
     --fetch-size 10000 \
     --hive-drop-import-delims \
     --fields-terminated-by '\t' \
-    --target-dir '/health/hbs/sys_user' \
+    --target-dir '/health/hbs/${tableName}' \
     ''' % (dbConfigs['connect'], dbConfigs['user'], dbConfigs['password'])
     print(sqoopCmd)
     status, res = commands.getstatusoutput(sqoopCmd)
     print("res = %s" % (res))
     if status != 0:
-        print("sqoop import hbs.sys_user error")
+        print("sqoop import hbs.${tableName} error")
 
 
 if __name__ == '__main__':

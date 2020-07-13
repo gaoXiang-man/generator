@@ -1,24 +1,26 @@
 package cn.healthlink.pratt;
+
 import cn.healthlink.pratt.controller.SysGeneratorController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.applet.AppletContext;
+import java.util.Arrays;
 
 @SpringBootApplication
 public class GeneratorApplication {
 
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		ConfigurableApplicationContext appletContext=SpringApplication.run(GeneratorApplication.class, args);
-		SysGeneratorController sysGeneratorController=appletContext.getBean("sysGeneratorController",SysGeneratorController.class);
-		try {
-			sysGeneratorController.auto(null,null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        ConfigurableApplicationContext appletContext = SpringApplication.run(GeneratorApplication.class, args);
+        SysGeneratorController sysGeneratorController = appletContext.getBean("sysGeneratorController", SysGeneratorController.class);
+        try {
+            System.out.println("传入参数"+Arrays.toString(args));
+            sysGeneratorController.auto(null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
