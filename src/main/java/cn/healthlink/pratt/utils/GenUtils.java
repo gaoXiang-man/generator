@@ -14,6 +14,7 @@ import org.apache.commons.lang.WordUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,6 +31,8 @@ import java.util.zip.ZipOutputStream;
 @Slf4j
 public class GenUtils {
 
+    private static final String DEFAULT_FILE_NAME = "generator.properties";
+
     public static List<String> getTemplates() {
         List<String> templates = new ArrayList<>();
         templates.add("template/PythonTableCreate.sql.vm");
@@ -42,10 +45,10 @@ public class GenUtils {
      * 生成代码
      */
     public static void generatorCode(Map<String, String> table,
-                                     List<Map<String, String>> columns, ZipOutputStream zip) {
-        log.info("生成开始,table:"+ JSONObject.toJSONString(table));
+                                     List<Map<String, String>> columns,
+                                     ZipOutputStream zip, Configuration config) {
+        log.info("生成开始,table:" + JSONObject.toJSONString(table));
         //配置信息
-        Configuration config = getConfig();
         boolean hasBigDecimal = false;
         //表信息
         TableEntity tableEntity = new TableEntity();
@@ -163,12 +166,19 @@ public class GenUtils {
     /**
      * 获取配置信息
      */
-    public static Configuration getConfig() {
+    public static Configuration getConfig(String fileName) {
         try {
-            return new PropertiesConfiguration("generator.properties");
+            return new PropertiesConfiguration(fileName);
         } catch (ConfigurationException e) {
             throw new RRException("获取配置文件失败，", e);
         }
+    }
+
+    /**
+     * 获取配置信息
+     */
+    public static Configuration getConfig() {
+        return getConfig(DEFAULT_FILE_NAME);
     }
 
     /**
@@ -184,7 +194,7 @@ public class GenUtils {
             return moduleName + "/create" + File.separator + tableEntity.getTableName() + ".sql";
         }
         if (template.contains("PythonTableQuery.py.vm")) {
-            return moduleName + "/query/"+ tableEntity.getTableName()+ File.separator + tableEntity.getTableName() + ".py";
+            return moduleName + "/query/" + tableEntity.getTableName() + File.separator + tableEntity.getTableName() + ".py";
         }
         if (template.contains("CreateJob.job.vm")) {
             return moduleName + "/zip" + File.separator + tableEntity.getTableName() + ".job";
