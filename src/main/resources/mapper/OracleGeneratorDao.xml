@@ -23,7 +23,6 @@
         where dt.table_name = dtc.table_name
         and dt.table_name = uo.object_name
         and uo.object_type='TABLE'
-        and UPPER(dt.table_name)='SYS_EXPORT_FULL_01'
         <if test="owner != null and owner!=''">
             and UPPER(owner)=UPPER(#{owner})
         </if>

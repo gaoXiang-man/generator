@@ -33,6 +33,8 @@ public class GenUtils {
 
     private static final String DEFAULT_FILE_NAME = "generator.properties";
 
+    private static String DEFAULT_DATA_TYPE="String";
+
     public static List<String> getTemplates() {
         List<String> templates = new ArrayList<>();
         templates.add("template/PythonTableCreate.sql.vm");
@@ -74,7 +76,7 @@ public class GenUtils {
             columnEntity.setAttrname(StringUtils.uncapitalize(attrName));
 
             //列的数据类型，转换成Java类型
-            String attrType = config.getString(columnEntity.getDataType(), "unknowType");
+            String attrType = config.getString(columnEntity.getDataType(), DEFAULT_DATA_TYPE);
             columnEntity.setAttrType(attrType);
             if (!hasBigDecimal && attrType.equals("BigDecimal")) {
                 hasBigDecimal = true;
