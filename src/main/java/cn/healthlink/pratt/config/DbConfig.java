@@ -9,13 +9,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+import javax.annotation.Resource;
+
 /**
  * 数据库配置
  */
 @Configuration
 public class DbConfig {
-    @Value("${heathlink.database: mysql}")
-    private String database;
+    @Value("${heathlink.database.type}")
+    private String DATABASE_TYPE;
     @Autowired
     private MySQLGeneratorDao mySQLGeneratorDao;
     @Autowired
@@ -28,16 +30,16 @@ public class DbConfig {
     @Bean
     @Primary
     public GeneratorDao getGeneratorDao() {
-        if ("mysql".equalsIgnoreCase(database)) {
+        if ("mysql".equalsIgnoreCase(DATABASE_TYPE)) {
             return mySQLGeneratorDao;
-        } else if ("oracle".equalsIgnoreCase(database)) {
+        } else if ("oracle".equalsIgnoreCase(DATABASE_TYPE)) {
             return oracleGeneratorDao;
-        } else if ("sqlserver".equalsIgnoreCase(database)) {
+        } else if ("sqlserver".equalsIgnoreCase(DATABASE_TYPE)) {
             return sqlServerGeneratorDao;
-        } else if ("postgresql".equalsIgnoreCase(database)) {
+        } else if ("postgresql".equalsIgnoreCase(DATABASE_TYPE)) {
             return postgreSQLGeneratorDao;
         } else {
-            throw new RRException("不支持当前数据库：" + database);
+            throw new RRException("不支持当前数据库：" + DATABASE_TYPE);
         }
     }
 }

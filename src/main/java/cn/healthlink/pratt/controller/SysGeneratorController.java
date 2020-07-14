@@ -7,9 +7,12 @@ import cn.healthlink.pratt.utils.DateUtils;
 import com.alibaba.fastjson.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.*;
@@ -17,13 +20,15 @@ import java.util.*;
 /**
  * 代码生成器
  */
-@Controller
+@Configuration
 @Slf4j
 public class SysGeneratorController {
     @Autowired
     private SysGeneratorService sysGeneratorService;
+
     @Autowired
     private GeneratorDao generatorDao;
+
     private static final String FILE_DEFAULT_PATH1 = "./";
     private static final String FILE_DEFAULT_PATH2 = ".\\";
 
@@ -33,29 +38,26 @@ public class SysGeneratorController {
     private String FILE_NAME;
     @Value("${file.format}")
     private String FILE_FORMAT;
+    @Value("${heathlink.database.schema}")
+    private String DATABASE_SCHEMA;
+    @Value("${heathlink.database.type}")
+    private String DATABASE_TYPE;
 
-    public String auto(String path, String fileName, String format) throws Exception {
+
+    public String auto() throws Exception {
+        String path=FILE_PATH;
+        String fileName=FILE_NAME;
+        String format=FILE_FORMAT;
         //        判断路径空赋值默认路径
-        if (Objects.isNull(path)) {
-            File directory = new File("");
-            if (FILE_PATH.equals(FILE_DEFAULT_PATH1) || FILE_PATH.equals(FILE_DEFAULT_PATH2)) {
-                path = directory.getCanonicalPath();
-            } else {
-                path = FILE_PATH;
-            }
-        }
-        if (Objects.isNull(format)) {
-            format = FILE_FORMAT;
+        File directory = new File("");
+        if (FILE_PATH.equals(FILE_DEFAULT_PATH1) || FILE_PATH.equals(FILE_DEFAULT_PATH2)) {
+            path = directory.getCanonicalPath();
         }
         log.info("输出文件路径:" + path);
         File file = new File(path);
         // 压缩文件的路径不存在
         if (!file.exists()) {
             throw new Exception("输出文件路径不存在 path:" + path);
-        }
-        // 设置默认文件名称
-        if (Objects.isNull(fileName)) {
-            fileName = FILE_NAME;
         }
         //给文件名追加日期和时间
         fileName = fileName + "-" + DateUtils.format(new Date(), "yyyyMMdd-HHmmss");
@@ -64,7 +66,13 @@ public class SysGeneratorController {
         FileOutputStream outputStream = new FileOutputStream(generateFileName);
         // 压缩输出流
         log.info(generateFileName);
-        List<Map<String, Object>> list = generatorDao.queryList(new HashMap<>());
+
+        Map<String, Object> map =new HashMap<>();
+        if (Objects.nonNull(DATABASE_TYPE)){
+            if (Objects.equals(DATABASE_TYPE.toUpperCase(),"ORACLE"))
+                map.put("owner",DATABASE_SCHEMA);
+        }
+        List<Map<String, Object>> list = generatorDao.queryList(map);
         if (Objects.nonNull(list)) {
             if (list.size() > 0) {
                 log.info("表集合:" + JSONArray.toJSONString(list));
@@ -81,15 +89,4 @@ public class SysGeneratorController {
     }
 
 
-    public String getPath() {
-        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-        if (System.getProperty("os.name").contains("dows")) {
-            path = path.substring(1, path.length());
-        }
-        if (path.contains("jar")) {
-            path = path.substring(0, path.lastIndexOf("."));
-            return path.substring(0, path.lastIndexOf("/"));
-        }
-        return path.replace("target/classes/", "");
-    }
 }

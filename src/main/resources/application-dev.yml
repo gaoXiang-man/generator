@@ -40,9 +40,21 @@ pagehelper:
   params: count=countSql
 
 
-#指定数据库，可选值有【mysql、oracle、sqlserver、postgresql】
+# 自定义参数配置
 heathlink:
-  database: oracle
+  database:
+    #指定数据库类型，可选值有【mysql、oracle、sqlserver、postgresql】
+    type: oracle
+    #mysql对应数据名 oracle对应模式名
+    schema: YMJY
+  #配置文件信息
+  properties:
+    #配置文件路径 默认路径resources下的文件
+    path:
+    #配置文件名称
+    name: generator.properties
+#代码生成器，配置信息
+
 
 #生成文件配置
 file:
