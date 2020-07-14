@@ -78,10 +78,14 @@ public class SysGeneratorService {
                 //查询列信息
                 List<Map<String, String>> columns = queryColumns(tableName);
                 //生成代码
-                log.info("开始生成表 ,table:"+ JSONObject.toJSONString(table));
-                log.info("开始生成表 ,columns:"+ JSONObject.toJSONString(columns));
-                log.info("开始生成表 ,zip:"+ JSONObject.toJSONString(zip));
-                GenUtils.generatorCode(table, columns, zip);
+                log.info("table 信息:"+ JSONObject.toJSONString(table));
+                log.info("columns 信息:"+ JSONObject.toJSONString(columns));
+                log.info("zip 信息:"+ JSONObject.toJSONString(zip));
+                if (Objects.isNull(table)){
+                    log.error("没有生成 表 tableName :"+ tableName+",因为没有获取到参数");
+                }else {
+                    GenUtils.generatorCode(table, columns, zip);
+                }
             }
         });
         IOUtils.closeQuietly(zip);

@@ -3,16 +3,16 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     #MySQL配置
-    driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1/ms_user
-    #    url: jdbc:mysql://127.0.0.1:3306/doctor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-    username: root
-    password: yunyun.15yun
+#    driverClassName: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://127.0.0.1/ms_user
+#    #    url: jdbc:mysql://127.0.0.1:3306/doctor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+#    username: root
+#    password: yunyun.15yun
     #oracle配置
-#    driverClassName: oracle.jdbc.OracleDriver
-#    url: jdbc:oracle:thin:@192.168.10.10:1521:helowin
-#    username: renren
-#    password: 123456
+    driverClassName: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@121.36.46.229:1521:orcl
+    username: ymjy
+    password: 123456
     #SQLServer配置
 #    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
 #    url: jdbc:sqlserver://192.168.10.10:1433;DatabaseName=renren_security
@@ -42,4 +42,13 @@ pagehelper:
 
 #指定数据库，可选值有【mysql、oracle、sqlserver、postgresql】
 heathlink:
-  database: mysql
+  database: oracle
+
+#生成文件配置
+file:
+  name: jiaoben
+  #生成文件路径
+  path: ./
+  #文件压缩格式
+  format: zip
+

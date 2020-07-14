@@ -22,7 +22,7 @@
 		user_objects uo
 		where dt.table_name = dtc.table_name and dt.table_name = uo.object_name and uo.object_type='TABLE'
 		<if test="tableName != null and tableName.trim() != ''">
-			and dt.table_name like concat('%', UPPER(#{tableName}))
+			and UPPER(dt.table_name) like concat('%', UPPER(#{tableName}))
 		</if>
 		order by uo.CREATED desc
 	</select>
@@ -54,7 +54,7 @@
         and ucc.column_name = col.column_name
         left join user_constraints uc
         on uc.constraint_name = ucc.constraint_name
-        where col.table_name = upper(#{tableName})
+        where upper(col.table_name) = upper(#{tableName})
         ) temp
         where temp.row_flg = 1
         order by temp.column_id
