@@ -11,12 +11,14 @@
         <result column="COLUMNKEY" property="columnKey"></result>
         <result column="EXTRA" property="extra"></result>
         <result column="CREATETIME" property="createTime"></result>
+        <result column="OWNER" property="schema"></result>
     </resultMap>
 
     <select id="queryList" resultMap="tableMap">
         select dt.table_name tableName,
         dtc.comments tableComment,
-        uo.created createTime
+        uo.created createTime,
+        owner owner
         from dba_tables dt,
         user_tab_comments dtc,
         user_objects uo
@@ -33,8 +35,8 @@
     </select>
 
     <select id="queryTable" resultMap="tableMap">
-		select dt.table_name tableName,dtc.comments tableComment,dt.last_analyzed createTime
-		from user_tables dt,user_tab_comments dtc
+		select dt.table_name tableName,dtc.comments tableComment,dt.last_analyzed createTime,owner owner
+		from dba_tables dt,user_tab_comments dtc
 		 where dt.table_name=dtc.table_name
 		  and UPPER(dt.table_name) = UPPER(#{tableName})
 	</select>

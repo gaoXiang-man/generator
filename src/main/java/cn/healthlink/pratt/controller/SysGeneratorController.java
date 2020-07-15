@@ -7,12 +7,9 @@ import cn.healthlink.pratt.utils.DateUtils;
 import com.alibaba.fastjson.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Controller;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.*;
@@ -32,11 +29,11 @@ public class SysGeneratorController {
     private static final String FILE_DEFAULT_PATH1 = "./";
     private static final String FILE_DEFAULT_PATH2 = ".\\";
 
-    @Value("${file.path}")
+    @Value("${heathlink.file.path}")
     private String FILE_PATH;
-    @Value("${file.name}")
+    @Value("${heathlink.file.name}")
     private String FILE_NAME;
-    @Value("${file.format}")
+    @Value("${heathlink.file.format}")
     private String FILE_FORMAT;
     @Value("${heathlink.database.schema}")
     private String DATABASE_SCHEMA;

@@ -1,7 +1,7 @@
-create external table ${tableName} (
-#foreach($column in $columns) `${column.columnName}`  $column.attrType #if($foreach.hasNext),#end #end
+create external table `${tableName}` (
+#foreach($column in $columns) `${column.columnNameL}`  $column.attrTypeL #if($foreach.hasNext),#end #end
  )
 row format delimited
 fields terminated by '\t'
 stored as textfile
-location '/health/hbs/${tableName}';
+location '/health/${schemaL}/${tableName}';

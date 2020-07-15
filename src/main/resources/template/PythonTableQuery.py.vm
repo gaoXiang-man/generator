@@ -3,14 +3,13 @@
 
 import commands
 import traceback
-import com.healthlink.hbs.util.HbsConfig as config
+import com.healthlink.dbutil as config
 
-
-def exprotSysUser(dbConfigs):
+def exportData(dbConfigs):
     sqoopCmd = r'''sqoop-import --connect %s \
     --username %s  \
     --password %s \
-    --query 'select #foreach($column in $columns)`${column.columnName}`#if($foreach.hasNext),#end #end from ${tableName} where $CONDITIONS' \
+    --query 'select #foreach($column in $columns)`${column.columnNameL}`#if($foreach.hasNext),#end #end from `${tableName}` where $CONDITIONS' \
     --delete-target-dir \
     -m 1 \
     --split-by id \
@@ -19,18 +18,18 @@ def exprotSysUser(dbConfigs):
     --fetch-size 10000 \
     --hive-drop-import-delims \
     --fields-terminated-by '\t' \
-    --target-dir '/health/hbs/${tableName}' \
+    --target-dir '/health/${schemaL}/${tableName}' \
     ''' % (dbConfigs['connect'], dbConfigs['user'], dbConfigs['password'])
     print(sqoopCmd)
     status, res = commands.getstatusoutput(sqoopCmd)
     print("res = %s" % (res))
     if status != 0:
-        print("sqoop import hbs.${tableName} error")
+        print("sqoop import ${schemaL}.${tableName} error")
 
 
 if __name__ == '__main__':
     try:
-        exprotSysUser(config.dbConfigs)
+        exportData(config.dbConfigs['${schemaL}]')
     except Exception, e:
         print e
         print traceback.print_exc()

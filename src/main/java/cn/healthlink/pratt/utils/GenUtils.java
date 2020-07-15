@@ -14,26 +14,25 @@ import org.apache.commons.lang.WordUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.springframework.beans.factory.annotation.Value;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
  * 代码生成器   工具类
  */
 @Slf4j
+@org.springframework.context.annotation.Configuration
 public class GenUtils {
 
     private static final String DEFAULT_FILE_NAME = "generator.properties";
 
     private static String DEFAULT_DATA_TYPE="String";
+
 
     public static List<String> getTemplates() {
         List<String> templates = new ArrayList<>();
@@ -48,13 +47,16 @@ public class GenUtils {
      */
     public static void generatorCode(Map<String, String> table,
                                      List<Map<String, String>> columns,
-                                     ZipOutputStream zip, Configuration config) {
+                                     ZipOutputStream zip,
+                                     Configuration config) {
         log.info("生成开始,table:" + JSONObject.toJSONString(table));
         //配置信息
         boolean hasBigDecimal = false;
         //表信息
         TableEntity tableEntity = new TableEntity();
         tableEntity.setTableName(table.get("tableName"));
+        tableEntity.setSchema(table.get("schema"));
+        tableEntity.setSchemaL(table.get("schema").toLowerCase());
         tableEntity.setComments(table.get("tableComment"));
         //表名转换成Java类名
         String className = tableToJava(tableEntity.getTableName(), config.getString("tablePrefix"));
@@ -105,7 +107,9 @@ public class GenUtils {
 
         //封装模板数据
         Map<String, Object> map = new HashMap<>();
-        map.put("tableName", tableEntity.getTableName());
+        map.put("schema", tableEntity.getSchema());
+        map.put("schemaL", tableEntity.getSchemaL());
+        map.put("tableName", tableEntity.getTableName().toLowerCase());
         map.put("comments", tableEntity.getComments());
         map.put("pk", tableEntity.getPk());
         map.put("className", tableEntity.getClassName());
@@ -131,7 +135,7 @@ public class GenUtils {
 
             try {
                 //添加到zip
-                String fileName = getFileName(template, tableEntity, config.getString("package"), config.getString("moduleName"));
+                String fileName = getFileName(template, tableEntity.getTableName().toLowerCase(), config.getString("package"), tableEntity.getSchemaL());
                 if (Objects.nonNull(fileName)) {
                     ZipEntry zipEntry = new ZipEntry(fileName);
                     zip.putNextEntry(zipEntry);
@@ -141,7 +145,7 @@ public class GenUtils {
                 }
             } catch (IOException e) {
                 System.out.println(e.toString());
-                throw new RRException("渲染模板失败，表名：" + tableEntity.getTableName(), e);
+                throw new RRException("渲染模板失败，表名：" + tableEntity.getTableName().toLowerCase(), e);
             }
         }
         log.info("生成结束");
@@ -186,20 +190,20 @@ public class GenUtils {
     /**
      * 获取文件名
      */
-    public static String getFileName(String template, TableEntity tableEntity, String packageName, String moduleName) {
+    public static String getFileName(String template, String tableName, String packageName, String schema) {
         String packagePath = "main" + File.separator + "java" + File.separator;
         if (StringUtils.isNotBlank(packageName)) {
-            packagePath += packageName.replace(".", File.separator) + File.separator + moduleName + File.separator;
+            packagePath += packageName.replace(".", File.separator) + File.separator + schema + File.separator;
         }
 
         if (template.contains("PythonTableCreate.sql.vm")) {
-            return moduleName + "/create" + File.separator + tableEntity.getTableName() + ".sql";
+            return  schema + File.separator+ "sql" + File.separator + tableName + ".sql";
         }
         if (template.contains("PythonTableQuery.py.vm")) {
-            return moduleName + "/query/" + tableEntity.getTableName() + File.separator + tableEntity.getTableName() + ".py";
+            return schema + File.separator + "python"+ File.separator + tableName + File.separator + tableName + ".py";
         }
         if (template.contains("CreateJob.job.vm")) {
-            return moduleName + "/zip" + File.separator + tableEntity.getTableName() + ".job";
+            return schema + File.separator + "zip" + File.separator + tableName + ".job";
         }
         return null;
     }

@@ -1,5 +1,4 @@
 spring:
-  profiles: dev
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     #MySQL配置
@@ -33,6 +32,10 @@ spring:
 mybatis:
   mapperLocations: classpath:mapper/**/*.xml
 
+# 打印sql
+logging:
+  level:
+    cn.healthlink.pratt.dao : debug
 
 pagehelper:
   reasonable: true
@@ -53,14 +56,14 @@ heathlink:
     path:
     #配置文件名称
     name: generator.properties
-#代码生成器，配置信息
+  #生成文件配置
+  file:
+    name: jiaoben
+    #生成文件路径
+    path: ./
+    #文件压缩格式
+    format: zip
 
 
-#生成文件配置
-file:
-  name: jiaoben
-  #生成文件路径
-  path: ./
-  #文件压缩格式
-  format: zip
+
 
