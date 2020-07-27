@@ -4,7 +4,6 @@ spring:
     #MySQL配置
 #    driverClassName: com.mysql.cj.jdbc.Driver
 #    url: jdbc:mysql://127.0.0.1/ms_user
-#    #    url: jdbc:mysql://127.0.0.1:3306/doctor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
 #    username: root
 #    password: yunyun.15yun
     #oracle配置
@@ -46,10 +45,8 @@ pagehelper:
 # 自定义参数配置
 heathlink:
   database:
-    #指定数据库类型，可选值有【mysql、oracle、sqlserver、postgresql】
-    type: oracle
-    #mysql对应数据名 oracle对应模式名
-    schema: YMJY
+    #mysql对应数据名 oracle对应模式名 mysql为数据库链接中的模式名(只作为生成文件名称的一部分)
+    schema: ymjy
   #配置文件信息
   properties:
     #配置文件路径 默认路径resources下的文件

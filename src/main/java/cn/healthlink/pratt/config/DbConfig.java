@@ -15,9 +15,7 @@ import javax.annotation.Resource;
  * 数据库配置
  */
 @Configuration
-public class DbConfig {
-    @Value("${heathlink.database.type}")
-    private String DATABASE_TYPE;
+public class DbConfig extends BaseCon{
     @Autowired
     private MySQLGeneratorDao mySQLGeneratorDao;
     @Autowired
@@ -30,16 +28,16 @@ public class DbConfig {
     @Bean
     @Primary
     public GeneratorDao getGeneratorDao() {
-        if ("mysql".equalsIgnoreCase(DATABASE_TYPE)) {
+        if ("mysql".equalsIgnoreCase(this.getDBType())) {
             return mySQLGeneratorDao;
-        } else if ("oracle".equalsIgnoreCase(DATABASE_TYPE)) {
+        } else if ("oracle".equalsIgnoreCase(this.getDBType())) {
             return oracleGeneratorDao;
-        } else if ("sqlserver".equalsIgnoreCase(DATABASE_TYPE)) {
+        } else if ("sqlserver".equalsIgnoreCase(this.getDBType())) {
             return sqlServerGeneratorDao;
-        } else if ("postgresql".equalsIgnoreCase(DATABASE_TYPE)) {
+        } else if ("postgresql".equalsIgnoreCase(this.getDBType())) {
             return postgreSQLGeneratorDao;
         } else {
-            throw new RRException("不支持当前数据库：" + DATABASE_TYPE);
+            throw new RRException("不支持当前数据库：" + this.getDBType());
         }
     }
 }

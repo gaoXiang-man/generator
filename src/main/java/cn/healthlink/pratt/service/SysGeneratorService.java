@@ -1,5 +1,6 @@
 package cn.healthlink.pratt.service;
 
+import cn.healthlink.pratt.config.BaseCon;
 import cn.healthlink.pratt.dao.GeneratorDao;
 import cn.healthlink.pratt.utils.GenUtils;
 import cn.healthlink.pratt.utils.PageUtils;
@@ -29,20 +30,18 @@ public class SysGeneratorService {
 
     @Autowired
     private GeneratorDao generatorDao;
+    @Autowired
+    private BaseCon baseCon;
 
-    @Value("${heathlink.properties.path}")
-    private String PRO_FILE_PATH;
-    @Value("${heathlink.properties.name}")
-    private String PRO_FILE_NAME;
 
     public String getProFile() {
-        String path="";
-        String name="";
-        if (Objects.nonNull(PRO_FILE_PATH)){
-            path=PRO_FILE_PATH;
+        String path = "";
+        String name = "";
+        if (Objects.nonNull(baseCon.PRO_FILE_PATH)) {
+            path = baseCon.PRO_FILE_PATH;
         }
-        if (Objects.nonNull(PRO_FILE_NAME)){
-            name=PRO_FILE_NAME;
+        if (Objects.nonNull(baseCon.PRO_FILE_NAME)) {
+            name = baseCon.PRO_FILE_NAME;
         }
         return path + name;
     }
@@ -81,7 +80,7 @@ public class SysGeneratorService {
                 if (Objects.isNull(table)) {
                     log.error("没有生成 表 tableName :" + tableName + ",因为没有获取到参数");
                 } else {
-                    GenUtils.generatorCode(table, columns, zip, GenUtils.getConfig(getProFile()));
+                    GenUtils.generatorCode(table, columns, zip, GenUtils.getConfig(getProFile()), baseCon.getDBType());
                 }
             }
         });

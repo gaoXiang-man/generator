@@ -1,2 +1,2 @@
 type=command
-command=python /opt/app/com/healthlink/hbs/${tableName}/${tableName}.py
+command=python /opt/app/com/healthlink/${schemaL}/${tableName}/${tableName}.py

@@ -12,6 +12,8 @@
         <result column="EXTRA" property="extra"></result>
         <result column="CREATETIME" property="createTime"></result>
         <result column="OWNER" property="schema"></result>
+        <result column="DATASCALE" property="dataScale"></result>
+        <result column="DATAPRECISION" property="dataPrecision"></result>
     </resultMap>
 
     <select id="queryList" resultMap="tableMap">
@@ -32,6 +34,7 @@
             and UPPER(dt.table_name) like concat('%', UPPER(#{tableName}))
         </if>
         order by uo.CREATED desc
+
     </select>
 
     <select id="queryTable" resultMap="tableMap">
@@ -45,6 +48,8 @@
         select temp.column_name columnname,
         temp.data_type dataType,
         temp.comments columnComment,
+        temp.dataPrecision dataPrecision,
+        temp.dataScale dataScale,
         case temp.constraint_type when 'P' then 'PRI' when 'C' then 'UNI' else '' end "COLUMNKEY",
         '' "EXTRA"
         from (
@@ -53,6 +58,8 @@
         col.data_type,
         colc.comments,
         uc.constraint_type,
+        col.DATA_PRECISION dataPrecision,
+        col.DATA_SCALE dataScale,
         -- 去重
         row_number() over (partition by col.column_name order by uc.constraint_type desc) as row_flg
         from user_tab_columns col

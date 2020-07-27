@@ -26,12 +26,28 @@ import java.util.zip.ZipOutputStream;
  * 代码生成器   工具类
  */
 @Slf4j
-@org.springframework.context.annotation.Configuration
 public class GenUtils {
+
+    public static String getDBTypeByDriverClassname(String driverClassname) {
+        if (driverClassname.contains("mysql")) {
+            return "mysql";
+        } else if (driverClassname.contains("oracle")) {
+            return "oracle";
+        } else if (driverClassname.contains("sqlserver")) {
+            return "sqlserver";
+        } else if (driverClassname.contains("postgresql")) {
+            return "postgresql";
+        }
+        return null;
+    }
 
     private static final String DEFAULT_FILE_NAME = "generator.properties";
 
-    private static String DEFAULT_DATA_TYPE="String";
+    private static String DEFAULT_DATA_TYPE = "String";
+
+    private static final String DEFAULT_DATA_PRECISION = "38";
+
+    private static String DEFAULT_DATA_SCALE = "8";
 
 
     public static List<String> getTemplates() {
@@ -48,7 +64,7 @@ public class GenUtils {
     public static void generatorCode(Map<String, String> table,
                                      List<Map<String, String>> columns,
                                      ZipOutputStream zip,
-                                     Configuration config) {
+                                     Configuration config, String dbType) {
         log.info("生成开始,table:" + JSONObject.toJSONString(table));
         //配置信息
         boolean hasBigDecimal = false;
@@ -68,6 +84,7 @@ public class GenUtils {
         for (Map<String, String> column : columns) {
             ColumnEntity columnEntity = new ColumnEntity();
             columnEntity.setColumnName(column.get("columnName"));
+
             columnEntity.setDataType(column.get("dataType"));
             columnEntity.setComments(column.get("columnComment"));
             columnEntity.setExtra(column.get("extra"));
@@ -79,10 +96,22 @@ public class GenUtils {
 
             //列的数据类型，转换成Java类型
             String attrType = config.getString(columnEntity.getDataType(), DEFAULT_DATA_TYPE);
+            //            如果类型为配置中的小数,就增加精度
+            List<Object> precisionTransforms = config.getList("precisionTransform");
+            if (Objects.nonNull(attrType) && Objects.nonNull(precisionTransforms) && precisionTransforms.size() > 0) {
+                for (Object tmp : precisionTransforms) {
+                    if (Objects.nonNull(tmp) && tmp.toString().toUpperCase().equals(attrType.toUpperCase())) {
+                        String dataPrecision = Objects.isNull(column.get("dataPrecision")) ? DEFAULT_DATA_PRECISION : String.valueOf(column.get("dataPrecision"));
+                        String dataScale = Objects.isNull(column.get("dataScale")) ? DEFAULT_DATA_SCALE : String.valueOf(column.get("dataScale"));
+                        attrType = attrType + "(" + dataPrecision + "," + dataScale + ")";
+                    }
+                }
+            }
             columnEntity.setAttrType(attrType);
             if (!hasBigDecimal && attrType.equals("BigDecimal")) {
                 hasBigDecimal = true;
             }
+
             //是否主键
             if ("PRI".equalsIgnoreCase(column.get("columnKey")) && tableEntity.getPk() == null) {
                 tableEntity.setPk(columnEntity);
@@ -90,6 +119,7 @@ public class GenUtils {
 
             columsList.add(columnEntity);
         }
+
         tableEntity.setColumns(columsList);
 
         //没主键，则第一个字段为主键
@@ -109,6 +139,13 @@ public class GenUtils {
         Map<String, Object> map = new HashMap<>();
         map.put("schema", tableEntity.getSchema());
         map.put("schemaL", tableEntity.getSchemaL());
+        if (dbType.toUpperCase().equals("ORACLE")) {
+            map.put("modifier", "\"");
+        } else if (dbType.toUpperCase().equals("MYSQL")) {
+            map.put("modifier", "`");
+        } else {
+            map.put("modifier", "");
+        }
         map.put("tableName", tableEntity.getTableName().toLowerCase());
         map.put("comments", tableEntity.getComments());
         map.put("pk", tableEntity.getPk());
@@ -197,10 +234,10 @@ public class GenUtils {
         }
 
         if (template.contains("PythonTableCreate.sql.vm")) {
-            return  schema + File.separator+ "sql" + File.separator + tableName + ".sql";
+            return schema + File.separator + "sql" + File.separator + tableName + ".sql";
         }
         if (template.contains("PythonTableQuery.py.vm")) {
-            return schema + File.separator + "python"+ File.separator + tableName + File.separator + tableName + ".py";
+            return schema + File.separator + "python" + File.separator + tableName + File.separator + tableName + ".py";
         }
         if (template.contains("CreateJob.job.vm")) {
             return schema + File.separator + "zip" + File.separator + tableName + ".job";

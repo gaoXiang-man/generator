@@ -9,7 +9,7 @@ def exportData(dbConfigs):
     sqoopCmd = r'''sqoop-import --connect %s \
     --username %s  \
     --password %s \
-    --query 'select #foreach($column in $columns)`${column.columnNameL}`#if($foreach.hasNext),#end #end from `${tableName}` where $CONDITIONS' \
+    --query 'select #foreach($column in $columns)${modifier}${column.columnName}${modifier}#if($foreach.hasNext),#end #end from ${tableName} where $CONDITIONS' \
     --delete-target-dir \
     -m 1 \
     --split-by id \
@@ -29,7 +29,7 @@ def exportData(dbConfigs):
 
 if __name__ == '__main__':
     try:
-        exportData(config.dbConfigs['${schemaL}]')
+        exportData(config.dbConfigs['${schemaL}'])
     except Exception, e:
         print e
         print traceback.print_exc()

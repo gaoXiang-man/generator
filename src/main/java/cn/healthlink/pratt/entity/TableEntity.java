@@ -7,6 +7,7 @@ import java.util.List;
  * 表数据
  *
  */
+
 public class TableEntity {
 	//表的名称
 	private String tableName;
